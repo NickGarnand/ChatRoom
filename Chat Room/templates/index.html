@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Room</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <h1>Chat Room</h1>
+    <div>
+        <input type="text" id="Paitent" placeholder="Enter your Paitent">
+        <input type="text" id="Sigil" placeholder="Enter Sigil code">
+        <button onclick="joinRoom()">Join Sigil</button>
+        <button onclick="leaveRoom()">Leave Sigil</button>
+    </div>
+    <div id="chat">
+        <ul id="messages"></ul>
+    </div>
+    <input id="message" placeholder="Type a message" autocomplete="off">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const socket = io();
+
+        function joinRoom() {
+            const Paitent = document.getElementById('Paitent').value;
+            const Sigil = document.getElementById('Sigil').value;
+            socket.emit('join', {username: Paitent, room: Sigil});
+        }
+
+        function leaveRoom() {
+            const Paitent = document.getElementById('Paitent').value;
+            const Sigil = document.getElementById('Sigil').value;
+            socket.emit('leave', {username: Paitent, room: Sigil});
+        }
+
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            const Sigil = document.getElementById('Sigil').value;
+            socket.emit('message', {message, room: Sigil});
+            document.getElementById('message').value = '';
+        }
+
+        socket.on('message', function(msg) {
+            const messages = document.getElementById('messages');
+            const item = document.createElement('li');
+            item.textContent = msg;
+            messages.appendChild(item);
+        });
+    </script>
+</body>
+</html>
